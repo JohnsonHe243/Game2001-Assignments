@@ -94,9 +94,11 @@ public:
 	}
 protected:
 	// Protected functions
-		// Expansion
+	// Expansion
 	bool Expand()
 	{
+		SetGrowSize(2); // Expand based on an increasing value
+
 		if (m_growSize <= 0)
 		{
 			// LEAVE!
@@ -169,7 +171,7 @@ public:
 };
 
 template <typename T>
-class UnorderedArray : public Array<T>
+class OrderedArray : public Array<T>
 {
 public:
 	// Insertion -- Big-O = O(N)
