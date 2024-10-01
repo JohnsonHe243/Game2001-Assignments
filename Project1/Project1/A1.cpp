@@ -149,38 +149,6 @@ public:
 		m_array[m_numElements] = val;
 		m_numElements++;
 	}
-	// Deletion (2 ways)
-	// Remove the last item inserted into the array
-	void pop()
-	{
-		if (m_numElements > 0)
-		{
-			m_numElements--;	// Reduce the total number of elements by 1. Ignoring the last element.
-		}
-	}
-	// Remove an item given an index
-	// (Almost) Brute-force execution -- Big-O = O(N)
-	void remove(int index)
-	{
-		assert(m_array != nullptr);
-
-		if (index >= m_numElements)
-		{
-			// I am trying to remove something outside of the bounds of the array
-			return;	// <-- Maybe could do some form of exception handling
-		}
-
-		for (int i = index; i < m_numElements; i++)
-		{
-			// Start at the index we want to remove.
-			// Shift everything after index back by one.
-			if (i + 1 < m_numElements)	// Confines the loop into the array
-			{
-				m_array[i] = m_array[i + 1];
-			}
-		}
-		m_numElements--;
-	}
 	// Searching
 	// Linear Search
 	int search(T val)
@@ -197,5 +165,86 @@ public:
 		}
 
 		return -1;
+	}
+};
+
+template <typename T>
+class UnorderedArray : public Array<T>
+{
+public:
+	// Insertion -- Big-O = O(N)
+	void push(T val)
+	{
+		assert(m_array != nullptr);
+
+		if (m_numElements >= m_maxSize)
+		{
+			Expand();
+		}
+
+		int i, k;	// i - Index to be inserted. k - Used for shifting purposes
+		// Step 1: Find the index to insert val
+		for (i = 0; i < m_numElements; i++)
+		{
+			if (m_array[i] > val)
+			{
+				break;
+			}
+		}
+
+		// Step 2: Shift everything to the right of the index(i) forward by one. Work backwards
+		for (k = m_numElements; k > i; k--)
+		{
+			m_array[k] = m_array[k - 1];
+		}
+
+		// Step 3: Insert val into the array at index
+		m_array[i] = val;
+
+		m_numElements++;
+
+		// return i;
+	}
+	// Searching
+	// Binary Search
+	int search(T searchKey)
+	{
+		assert(m_array != nullptr);
+
+		// Helper variables.
+		int lowerBound = 0;
+		int upperBound = m_numElements - 1;
+		int current = 0;
+
+		while (1)	// <-- Replaced with recursion
+		{
+			current = (lowerBound + upperBound) >> 1;	//bitwise operation; divides by 2
+
+			// Binary search steps:
+			// Step 1: Check if the middle is the value we are looking for.
+			if (m_array[current] == searchKey)
+			{
+				// Found the item in the middle of the array. Return the index
+				return current;
+			}
+			// Step 2: Check that we've exhausted all options. Can't find the item
+			else if (lowerBound > upperBound)
+			{
+				return -1;
+			}
+			// Step 3: Check which half of the array the value is in.
+			else
+			{
+				if (m_array[current] < searchKey)
+				{
+					lowerBound = current + 1;	// Value may be in the upper half
+				}
+				else
+				{
+					upperBound = current - 1;	// Value may be in the lower half
+				}
+			}
+		}
+		return -1;	// Catch all return from danger.
 	}
 };
