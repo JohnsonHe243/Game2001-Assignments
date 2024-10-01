@@ -2,6 +2,8 @@
 // Student ID: 101175996
 
 #include <iostream>
+#include <cassert>
+
 using namespace std;
 
 // Base Array Template
@@ -10,7 +12,7 @@ class Array
 {
 public:
 	// Constructor
-	UnorderedArray(int size, int growBy = 1) :
+	Array(int size, int growBy = 2) :
 		m_array(NULL), m_maxSize(0), m_growSize(0), m_numElements(0)
 	{
 		if (size)	// Is this a legal size for an array?
@@ -23,7 +25,7 @@ public:
 		}
 	}
 	// Destructor
-	~UnorderedArray()
+	~Array()
 	{
 		if (m_array != nullptr)
 		{
@@ -97,8 +99,6 @@ protected:
 	// Expansion
 	bool Expand()
 	{
-		SetGrowSize(2); // Expand based on an increasing value
-
 		if (m_growSize <= 0)
 		{
 			// LEAVE!
@@ -106,7 +106,7 @@ protected:
 		}
 
 		// Create the new array
-		T* temp = new T[m_maxSize + m_growSize];
+		T* temp = new T[m_maxSize + m_growSize * m_increment]; // Expand Increment
 		assert(temp != nullptr);
 
 		// Copy the contents of the original array into the new array
@@ -120,6 +120,7 @@ protected:
 		temp = nullptr;
 
 		m_maxSize += m_growSize;
+		m_growSize = m_growSize * m_increment;
 
 		return true;
 	}
@@ -130,37 +131,40 @@ protected:
 	int m_maxSize;		// Maximum size of the array
 	int m_growSize;		// Amount the array can grow through expansion
 	int m_numElements;	// Number of items currently in my array
+
+	int m_increment = 2; // // Expand Increment
 };
 
 template <typename T>
 class UnorderedArray : public Array<T> 
 {
 public:
+	UnorderedArray(int val) : Array(val) {}
 	// Insertion
 	// Fast insertion for UnorderedArray -- Big-O is O(1)
 	void push(T val)
 	{
-		assert(m_array != nullptr); // Debugging purposes
+		assert(this->m_array != nullptr); // Debugging purposes
 
-		if (m_numElements >= m_maxSize)	// Check if the array has to expand to accommodate the new data.
+		if (this->m_numElements >= this->m_maxSize)	// Check if the array has to expand to accommodate the new data.
 		{
-			Expand();
+			this->Expand();
 		}
 
 		// My array has space for a new value. Let's add it!
-		m_array[m_numElements] = val;
-		m_numElements++;
+		this->m_array[this->m_numElements] = val;
+		this->m_numElements++;
 	}
 	// Searching
 	// Linear Search
 	int search(T val)
 	{
-		assert(m_array != nullptr);
+		assert(this->m_array != nullptr);
 
 		// Brute-force Search
-		for (int i = 0; i < m_numElements; i++)
+		for (int i = 0; i < this->m_numElements; i++)
 		{
-			if (m_array[i] == val)
+			if (this->m_array[i] == val)
 			{
 				return i;	// Return the index of where the item is located in the array
 			}
@@ -173,37 +177,40 @@ public:
 template <typename T>
 class OrderedArray : public Array<T>
 {
+	
 public:
+	OrderedArray(int val) : Array(val) {}
+
 	// Insertion -- Big-O = O(N)
 	void push(T val)
 	{
-		assert(m_array != nullptr);
+		assert(this->m_array != nullptr);
 
-		if (m_numElements >= m_maxSize)
+		if (this->m_numElements >= this->m_maxSize)
 		{
-			Expand();
+			this->Expand();
 		}
 
 		int i, k;	// i - Index to be inserted. k - Used for shifting purposes
 		// Step 1: Find the index to insert val
-		for (i = 0; i < m_numElements; i++)
+		for (i = 0; i < this->m_numElements; i++)
 		{
-			if (m_array[i] > val)
+			if (this->m_array[i] > val)
 			{
 				break;
 			}
 		}
 
 		// Step 2: Shift everything to the right of the index(i) forward by one. Work backwards
-		for (k = m_numElements; k > i; k--)
+		for (k = this->m_numElements; k > i; k--)
 		{
-			m_array[k] = m_array[k - 1];
+			this->m_array[k] = this->m_array[k - 1];
 		}
 
 		// Step 3: Insert val into the array at index
-		m_array[i] = val;
+		this->m_array[i] = val;
 
-		m_numElements++;
+		this->m_numElements++;
 
 		// return i;
 	}
@@ -211,11 +218,11 @@ public:
 	// Binary Search
 	int search(T searchKey)
 	{
-		assert(m_array != nullptr);
+		assert(this->m_array != nullptr);
 
 		// Helper variables.
 		int lowerBound = 0;
-		int upperBound = m_numElements - 1;
+		int upperBound = this->m_numElements - 1;
 		int current = 0;
 
 		while (1)	// <-- Replaced with recursion
@@ -224,7 +231,7 @@ public:
 
 			// Binary search steps:
 			// Step 1: Check if the middle is the value we are looking for.
-			if (m_array[current] == searchKey)
+			if (this->m_array[current] == searchKey)
 			{
 				// Found the item in the middle of the array. Return the index
 				return current;
@@ -237,7 +244,7 @@ public:
 			// Step 3: Check which half of the array the value is in.
 			else
 			{
-				if (m_array[current] < searchKey)
+				if (this->m_array[current] < searchKey)
 				{
 					lowerBound = current + 1;	// Value may be in the upper half
 				}
@@ -250,3 +257,31 @@ public:
 		return -1;	// Catch all return from danger.
 	}
 };
+
+int main()
+{
+	UnorderedArray<int> uArray(7);
+	OrderedArray<int> OArray(7);
+
+	uArray.push(1);
+	uArray.push(8);
+	uArray.push(2);
+	uArray.push(7);
+	uArray.push(3);
+	uArray.push(6);
+	uArray.push(4);
+	uArray.push(5);
+	
+	cout << "Unordered array contents: ";
+
+	for (int i = 0; i < uArray.GetSize(); i++)
+	{
+		cout << uArray[i] << " ";
+	}
+	cout << endl;
+
+	cout << "Search of 69 was found at array index: ";
+	cout << uArray.search(69) << endl;
+	cout << "Search for 23 was found at index: ";
+	cout << uArray.search(23) << endl;
+}
