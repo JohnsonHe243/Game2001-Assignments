@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cassert>
 #include <cstring>
+#include <math.h>
 
 using namespace std;
 
@@ -13,7 +14,7 @@ class Array
 {
 public:
 	// Constructor
-	Array(int size, int growBy = 2) :
+	Array(int size, int growBy = 1) :
 		m_array(NULL), m_maxSize(0), m_growSize(0), m_numElements(0)
 	{
 		if (size > 0)	// Is this a legal size for an array?
@@ -76,23 +77,23 @@ public:
 		m_numElements = 0;	 // Ignore (or forgets) all current items in the array
 	}
 	// Gets and Sets
-	int GetSize() const
+	int GetSize() 
 	{
 		return m_numElements;
 	}
-	int GetMaxSize() const
+	int GetMaxSize() 
 	{
 		return m_maxSize;
 	}
-	int GetGrowSize() const
+	int GetGrowSize() 
 	{
 		return m_growSize;
 	}
-	int GetIncrement() const
+	int GetIncrement() 
 	{
 		return m_increment;
 	}
-	int SetGrowSize(int val) const
+	int SetGrowSize(int val) 
 	{
 		assert(val >= 0);
 		m_growSize = val;
@@ -106,15 +107,16 @@ protected:
 	// Expansion
 	bool Expand()
 	{
-
-		if (m_growSize <= 0)
+		if (m_maxSize == 0)
 		{
-			// LEAVE!
-			return false;
+			m_maxSize = 2;
 		}
-		m_increment++;
-		m_maxSize += m_growSize * m_increment;
-
+		else
+		{
+			m_increment++;
+			m_maxSize = pow(2, m_increment++);
+		}
+		
 		// Create the new array
 		T* temp = new T[m_maxSize]; // Expand Increment
 		assert(temp != nullptr);
@@ -195,20 +197,27 @@ public:
 		
 		assert(Array<T>::m_array != nullptr);
 
+
+		int i, k;	// i - Index to be inserted. k - Used for shifting purposes
+		// Step 1: Find the index to insert val
+		for (i = 0; i < Array<T>::m_numElements; i++)
+		{ 
+			if (Array<T>::m_array[i] == val)
+			{
+				cout << " *push fail: " << val << " already exist at index" << i << ". " << endl;
+				return;
+			}
+			else if (Array<T>::m_array[i] > val)
+			{
+				break;
+			}
+		}
+
 		if (Array<T>::m_numElements >= Array<T>::m_maxSize)
 		{
 			Array<T>::Expand();
 		}
 
-		int i, k;	// i - Index to be inserted. k - Used for shifting purposes
-		// Step 1: Find the index to insert val
-		for (i = 0; i < Array<T>::m_numElements; i++)
-		{
-			if (Array<T>::m_array[i] > val)
-			{
-				break;
-			}
-		}
 
 		// Step 2: Shift everything to the right of the index(i) forward by one. Work backwards
 		for (k = Array<T>::m_numElements; k > i; k--)
@@ -296,28 +305,51 @@ void UnorderedArrayTest()
 	cout << "Search for 53 was found at index: ";
 	cout << ua.search(53);
 	cout << endl;
-	cout << "Max size is now: ";
+
+	cout << "The max size of this array is: ";
 	cout << ua.GetMaxSize();
-	cout << " and has been expanded by " << ua.GetIncrement() << " times, from " 
-			<< o << " to " << ua.GetMaxSize();
-	cout << endl;
-	cout << ua.GetMaxSize() << " - " << o << " = " << ua.GetMaxSize() - o << " = ";
-	for (int i = 0; i < ua.GetIncrement(); i++)
-	{
-		int c = 2;
-		cout << c * (i + 1);
-		if (ua.GetIncrement() > 1 && i + 1 < ua.GetIncrement())
-		{
-			cout << " + ";
-		}
-	}	
+	cout << " and has expanded " << ua.GetIncrement() << " times." << endl << endl;
 }
 
+void OrderedArrayTest()
+{
+	int o = 1;
+	OrderedArray<int> oa(o);
+	oa.push(43);
+	oa.push(8);
+	oa.push(23);
+	oa.push(94);
+	oa.push(17);
+	oa.push(19);
+	oa.push(93);
+	oa.push(23);
+	oa.push(24);
+	oa.push(20);
+	oa.push(5);
+	oa.push(8);
 
+
+	oa.pop();
+	oa.remove(2);
+
+	cout << "Ordered array: ";
+	for (int i = 0; i < oa.GetSize(); i++)
+	{
+		cout << oa[i] << " ";
+	}
+	cout << endl;
+	cout << "Search for 20 was found at index: " << oa.search(20) << endl;
+	cout << "Search for 11 was found at index: " << oa.search(11) << endl;
+	cout << "The max size of this array is: ";
+	cout << oa.GetMaxSize();
+	cout << " and has expanded " << oa.GetIncrement() << " times." << endl;
+}
 
 int main()
 {
 	UnorderedArrayTest();
+	OrderedArrayTest();
+
 	return 1;
 
 }
