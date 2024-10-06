@@ -94,7 +94,11 @@ public:
 		assert(val >= 0);
 		m_growSize = val;
 	}
-protected:
+	bool GetExpand()
+	{
+		Expand();
+	}
+private:
 	// Protected functions
 	// Expansion
 	bool Expand()
@@ -124,7 +128,7 @@ protected:
 
 		return true;
 	}
-protected:
+private:
 	// Protected Variables
 	T* m_array;			// Pointer to the beginning of the array
 
@@ -139,32 +143,33 @@ template <typename T>
 class UnorderedArray : public Array<T> 
 {
 public:
-	UnorderedArray(int val) : Array(val) {}
+	UnorderedArray(int size) : Array() {}
+	~UnorderedArray() : ~Array() {}
 	// Insertion
 	// Fast insertion for UnorderedArray -- Big-O is O(1)
 	void push(T val)
 	{
-		assert(this->m_array != nullptr); // Debugging purposes
+		assert(Array<T>::m_array != nullptr); // Debugging purposes
 
-		if (this->m_numElements >= this->m_maxSize)	// Check if the array has to expand to accommodate the new data.
+		if (Array<T>::m_numElements >= Array<T>::m_maxSize)	// Check if the array has to expand to accommodate the new data.
 		{
-			this->Expand();
+			Array<T>::Expand();
 		}
 
 		// My array has space for a new value. Let's add it!
-		this->m_array[this->m_numElements] = val;
-		this->m_numElements++;
+		Array<T>::m_array[Array<T>::m_numElements] = val;
+		Array<T>::m_numElements++;
 	}
 	// Searching
 	// Linear Search
 	int search(T val)
 	{
-		assert(this->m_array != nullptr);
+		assert(Array<T>::m_array != nullptr);
 
 		// Brute-force Search
-		for (int i = 0; i < this->m_numElements; i++)
+		for (int i = 0; i < Array<T>::m_numElements; i++)
 		{
-			if (this->m_array[i] == val)
+			if (Array<T>::m_array[i] == val)
 			{
 				return i;	// Return the index of where the item is located in the array
 			}
@@ -179,38 +184,40 @@ class OrderedArray : public Array<T>
 {
 	
 public:
-	OrderedArray(int val) : Array(val) {}
+	OrderedArray(int size) : Array() {}
+	~OrderedArray() : ~Array() {}
+
 
 	// Insertion -- Big-O = O(N)
 	void push(T val)
 	{
-		assert(this->m_array != nullptr);
+		assert(Array<T>::m_array != nullptr);
 
-		if (this->m_numElements >= this->m_maxSize)
+		if (Array<T>::m_numElements >= Array<T>::m_maxSize)
 		{
-			this->Expand();
+			Array<T>::Expand();
 		}
 
 		int i, k;	// i - Index to be inserted. k - Used for shifting purposes
 		// Step 1: Find the index to insert val
-		for (i = 0; i < this->m_numElements; i++)
+		for (i = 0; i < Array<T>::m_numElements; i++)
 		{
-			if (this->m_array[i] > val)
+			if (Array<T>::m_array[i] > val)
 			{
 				break;
 			}
 		}
 
 		// Step 2: Shift everything to the right of the index(i) forward by one. Work backwards
-		for (k = this->m_numElements; k > i; k--)
+		for (k = Array<T>::m_numElements; k > i; k--)
 		{
-			this->m_array[k] = this->m_array[k - 1];
+			Array<T>::m_array[k] = Array<T>::m_array[k - 1];
 		}
 
 		// Step 3: Insert val into the array at index
-		this->m_array[i] = val;
+		Array<T>::m_array[i] = val;
 
-		this->m_numElements++;
+		Array<T>::m_numElements++;
 
 		// return i;
 	}
@@ -218,11 +225,11 @@ public:
 	// Binary Search
 	int search(T searchKey)
 	{
-		assert(this->m_array != nullptr);
+		assert(Array<T>::m_array != nullptr);
 
 		// Helper variables.
 		int lowerBound = 0;
-		int upperBound = this->m_numElements - 1;
+		int upperBound = Array<T>::m_numElements - 1;
 		int current = 0;
 
 		while (1)	// <-- Replaced with recursion
@@ -231,7 +238,7 @@ public:
 
 			// Binary search steps:
 			// Step 1: Check if the middle is the value we are looking for.
-			if (this->m_array[current] == searchKey)
+			if (Array<T>::m_array[current] == searchKey)
 			{
 				// Found the item in the middle of the array. Return the index
 				return current;
@@ -244,7 +251,7 @@ public:
 			// Step 3: Check which half of the array the value is in.
 			else
 			{
-				if (this->m_array[current] < searchKey)
+				if (Array<T>::m_array[current] < searchKey)
 				{
 					lowerBound = current + 1;	// Value may be in the upper half
 				}
@@ -258,30 +265,10 @@ public:
 	}
 };
 
+
+
 int main()
 {
-	UnorderedArray<int> uArray(7);
-	OrderedArray<int> OArray(7);
 
-	uArray.push(1);
-	uArray.push(8);
-	uArray.push(2);
-	uArray.push(7);
-	uArray.push(3);
-	uArray.push(6);
-	uArray.push(4);
-	uArray.push(5);
-	
-	cout << "Unordered array contents: ";
 
-	for (int i = 0; i < uArray.GetSize(); i++)
-	{
-		cout << uArray[i] << " ";
-	}
-	cout << endl;
-
-	cout << "Search of 69 was found at array index: ";
-	cout << uArray.search(69) << endl;
-	cout << "Search for 23 was found at index: ";
-	cout << uArray.search(23) << endl;
 }
