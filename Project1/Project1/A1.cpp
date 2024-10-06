@@ -3,19 +3,20 @@
 
 #include <iostream>
 #include <cassert>
+#include <cstring>
 
 using namespace std;
 
 // Base Array Template
-template<typename T>
+template<class T>
 class Array
 {
 public:
 	// Constructor
-	Array(int size, int growBy = 1) :
+	Array(int size, int growBy = 2) :
 		m_array(NULL), m_maxSize(0), m_growSize(0), m_numElements(0)
 	{
-		if (size)	// Is this a legal size for an array?
+		if (size > 0)	// Is this a legal size for an array?
 		{
 			m_maxSize = size;
 			m_array = new T[m_maxSize];		// Dynamically allocating an array to m_maxSize
@@ -25,16 +26,16 @@ public:
 		}
 	}
 	// Destructor
-	virtual ~Array()
-	{
-		if (m_array != nullptr)
-		{
-			delete[] m_array;
-			m_array = nullptr;
-		}
-	}
+	//virtual ~Array()
+	//{
+	//	if (m_array != nullptr)
+	//	{
+	//		delete[] m_array;
+	//		m_array = nullptr;
+	//	}
+	//}
 
-	virtual void push(T val = 0);
+	virtual void push(T val) = 0;
 
 	// Deletion (2 ways)
 	// Remove the last item inserted into the array
@@ -50,21 +51,16 @@ public:
 	void remove(int index)
 	{
 		assert(m_array != nullptr);
-
 		if (index >= m_numElements)
 		{
 			// I am trying to remove something outside of the bounds of the array
 			return;	// <-- Maybe could do some form of exception handling
 		}
-
-		for (int i = index; i < m_numElements; i++)
+		for (int i = index; i + 1 < m_numElements; i++)
 		{
 			// Start at the index we want to remove.
 			// Shift everything after index back by one.
-			if (i + 1 < m_numElements)	// Confines the loop into the array
-			{
 				m_array[i] = m_array[i + 1];
-			}
 		}
 		m_numElements--;
 	}
@@ -80,19 +76,23 @@ public:
 		m_numElements = 0;	 // Ignore (or forgets) all current items in the array
 	}
 	// Gets and Sets
-	int GetSize()
+	int GetSize() const
 	{
 		return m_numElements;
 	}
-	int GetMaxSize()
+	int GetMaxSize() const
 	{
 		return m_maxSize;
 	}
-	int GetGrowSize()
+	int GetGrowSize() const
 	{
 		return m_growSize;
 	}
-	int SetGrowSize(int val)
+	int GetIncrement() const
+	{
+		return m_increment;
+	}
+	int SetGrowSize(int val) const
 	{
 		assert(val >= 0);
 		m_growSize = val;
@@ -101,19 +101,22 @@ public:
 	{
 		Expand();
 	}
-private:
+protected:
 	// Protected functions
 	// Expansion
 	bool Expand()
 	{
+
 		if (m_growSize <= 0)
 		{
 			// LEAVE!
 			return false;
 		}
+		m_increment++;
+		m_maxSize += m_growSize * m_increment;
 
 		// Create the new array
-		T* temp = new T[m_maxSize + m_growSize * m_increment]; // Expand Increment
+		T* temp = new T[m_maxSize]; // Expand Increment
 		assert(temp != nullptr);
 
 		// Copy the contents of the original array into the new array
@@ -126,30 +129,29 @@ private:
 		m_array = temp;
 		temp = nullptr;
 
-		m_maxSize += m_growSize;
-		m_growSize = m_growSize * m_increment;
+
 
 		return true;
 	}
-private:
-	// Protected Variables
+protected:
+	// Private Variables
 	T* m_array;			// Pointer to the beginning of the array
 
 	int m_maxSize;		// Maximum size of the array
 	int m_growSize;		// Amount the array can grow through expansion
 	int m_numElements;	// Number of items currently in my array
 
-	int m_increment = 2; // // Expand Increment
+	int m_increment = 0; // // Expand Increment
 };
 
 template <typename T>
 class UnorderedArray : public Array<T> 
 {
 public:
-	UnorderedArray(int size, int growBy) : Array<T>(size, growBy) {}
+	UnorderedArray(int size, int growBy = 2) : Array<T>(size, growBy) {}
 	// Insertion
 	// Fast insertion for UnorderedArray -- Big-O is O(1)
-	void push(T val) 
+	void push(T val) override
 	{
 		assert(Array<T>::m_array != nullptr); // Debugging purposes
 
@@ -190,6 +192,7 @@ public:
 	// Insertion -- Big-O = O(N)
 	void push(T val) override
 	{
+		
 		assert(Array<T>::m_array != nullptr);
 
 		if (Array<T>::m_numElements >= Array<T>::m_maxSize)
@@ -266,13 +269,15 @@ public:
 
 void UnorderedArrayTest()
 {
-	UnorderedArray<int> ua(3);
+	int o = 3;
+	UnorderedArray<int> ua(o);
 
 	ua.push(3);
 	ua.push(53);
 	ua.push(83);
 	ua.push(23);
 	ua.push(82);
+	ua.push(9);
 
 	ua[2] = 112;
 
@@ -290,9 +295,22 @@ void UnorderedArrayTest()
 
 	cout << "Search for 53 was found at index: ";
 	cout << ua.search(53);
-
-	cout << endl << endl;
-		
+	cout << endl;
+	cout << "Max size is now: ";
+	cout << ua.GetMaxSize();
+	cout << " and has been expanded by " << ua.GetIncrement() << " times, from " 
+			<< o << " to " << ua.GetMaxSize();
+	cout << endl;
+	cout << ua.GetMaxSize() << " - " << o << " = " << ua.GetMaxSize() - o << " = ";
+	for (int i = 0; i < ua.GetIncrement(); i++)
+	{
+		int c = 2;
+		cout << c * (i + 1);
+		if (ua.GetIncrement() > 1 && i + 1 < ua.GetIncrement())
+		{
+			cout << " + ";
+		}
+	}	
 }
 
 
