@@ -4,7 +4,6 @@
 #include <iostream>
 #include <cassert>
 #include <cstring>
-#include <math.h>
 
 using namespace std;
 
@@ -114,7 +113,7 @@ protected:
 		else
 		{
 			m_increment++;
-			m_maxSize = pow(2, m_increment++);
+			m_maxSize *= 2;
 		}
 		
 		// Create the new array
@@ -157,10 +156,11 @@ public:
 	{
 		assert(Array<T>::m_array != nullptr); // Debugging purposes
 
-		if (Array<T>::m_numElements >= Array<T>::m_maxSize)	// Check if the array has to expand to accommodate the new data.
+		if (Array<T>::m_numElements >= Array<T>::m_maxSize)
 		{
 			Array<T>::Expand();
 		}
+
 
 		// My array has space for a new value. Let's add it!
 		Array<T>::m_array[Array<T>::m_numElements] = val;
@@ -278,8 +278,7 @@ public:
 
 void UnorderedArrayTest()
 {
-	int o = 3;
-	UnorderedArray<int> ua(o);
+	UnorderedArray<int> ua(1);
 
 	ua.push(3);
 	ua.push(53);
@@ -313,8 +312,7 @@ void UnorderedArrayTest()
 
 void OrderedArrayTest()
 {
-	int o = 1;
-	OrderedArray<int> oa(o);
+	OrderedArray<int> oa(1);
 	oa.push(43);
 	oa.push(8);
 	oa.push(23);
