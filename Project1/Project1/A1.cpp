@@ -7,12 +7,12 @@
 using namespace std;
 
 // Base Array Template
-template<class T>
+template<typename T>
 class Array
 {
 public:
 	// Constructor
-	Array(int size, int growBy = 2) :
+	Array(int size, int growBy = 1) :
 		m_array(NULL), m_maxSize(0), m_growSize(0), m_numElements(0)
 	{
 		if (size)	// Is this a legal size for an array?
@@ -25,7 +25,7 @@ public:
 		}
 	}
 	// Destructor
-	~Array()
+	virtual ~Array()
 	{
 		if (m_array != nullptr)
 		{
@@ -33,6 +33,9 @@ public:
 			m_array = nullptr;
 		}
 	}
+
+	virtual void push(T val = 0);
+
 	// Deletion (2 ways)
 	// Remove the last item inserted into the array
 	void pop()
@@ -143,11 +146,10 @@ template <typename T>
 class UnorderedArray : public Array<T> 
 {
 public:
-	UnorderedArray(int size) : Array() {}
-	~UnorderedArray() : ~Array() {}
+	UnorderedArray(int size, int growBy) : Array<T>(size, growBy) {}
 	// Insertion
 	// Fast insertion for UnorderedArray -- Big-O is O(1)
-	void push(T val)
+	void push(T val) 
 	{
 		assert(Array<T>::m_array != nullptr); // Debugging purposes
 
@@ -182,14 +184,11 @@ public:
 template <typename T>
 class OrderedArray : public Array<T>
 {
-	
 public:
-	OrderedArray(int size) : Array() {}
-	~OrderedArray() : ~Array() {}
-
+	OrderedArray(int size, int growBy =1) : Array<T>(size, growBy) {}
 
 	// Insertion -- Big-O = O(N)
-	void push(T val)
+	void push(T val) override
 	{
 		assert(Array<T>::m_array != nullptr);
 
@@ -265,10 +264,42 @@ public:
 	}
 };
 
+void UnorderedArrayTest()
+{
+	UnorderedArray<int> ua(3);
+
+	ua.push(3);
+	ua.push(53);
+	ua.push(83);
+	ua.push(23);
+	ua.push(82);
+
+	ua[2] = 112;
+
+	ua.pop();
+	ua.remove(2);
+
+	cout << "Unordered array: ";
+
+	for (int i = 0; i < ua.GetSize(); i++)
+	{
+		cout << ua[i] << " ";
+	}
+
+	cout << endl;
+
+	cout << "Search for 53 was found at index: ";
+	cout << ua.search(53);
+
+	cout << endl << endl;
+		
+}
+
 
 
 int main()
 {
-
+	UnorderedArrayTest();
+	return 1;
 
 }
