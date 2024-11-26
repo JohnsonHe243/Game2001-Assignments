@@ -1,6 +1,7 @@
 #pragma once
 #include <cassert>
 
+
 // Template Class Declarations
 template <class T> class LinkIterator;
 template <class T> class LinkedList;
