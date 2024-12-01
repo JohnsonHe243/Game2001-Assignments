@@ -1,82 +1,71 @@
 #include <iostream>
-#include "PriorityQueue.h"
+#include "PriorityQueueLinkedList.h"
+
 using namespace std;
 
+int main(void) {
 
-class NetworkMessage
-{
-public:
-	NetworkMessage() : m_priority(0), m_id(0) {}
-	NetworkMessage(int p, int id) : m_priority(p), m_id(id) {}
-	~NetworkMessage() {}
+	LinkedList<int> TestIntList;
 
-	int GetPriority()
-	{
-		return m_priority;
-	}
-	int GetID()
-	{
-		return m_id;
-	}
+	PriorityQueue<int> TestPrio;
 
-	// Overload operator
-	bool operator<(NetworkMessage& m)
-	{
-		// Check the priority level of both network messages
-		if (m_priority < m.GetPriority())
-		{
-			return true;
-		}
-		else if (m_id < m.GetID())
-		{
-			return true;
-		}
+	cout << "Testing base Linked list" << endl;
+	cout << "First we will attempt to pop an empty list" << endl;
 
-		return false;
-	}
-	bool operator>(NetworkMessage& m)
-	{
-		return !(*this < m);	// NOT( this is less than m )
-	}
-private:
-	int m_priority;
-	int m_id;
-};
+	TestIntList.Pop();
 
-int main()
-{
-	cout << "Priority queue data structure example!" << endl << endl;
+	cout << "Now we will push in a value of 20" << endl;
+	TestIntList.Push(20);
 
-	const int SIZE = 4;
-	PriorityQueue<NetworkMessage, less_cmp<NetworkMessage>> que(SIZE);
+	cout << "The front of the linked list is ";
+	cout << TestIntList.Front() << endl;
+	cout << "Now we push in 10" << endl;
+	TestIntList.Push(10);
 
-	que.push(NetworkMessage(3, 100));
-	que.push(NetworkMessage(2, 286));
-	que.push(NetworkMessage(1, 362));
-	que.push(NetworkMessage(3, 435));
+	cout << "The front of the list is now ";
+	cout << TestIntList.Front() << endl;
 
-	// Display the priority queue
-	cout << "Priority queue content (Size - " << que.GetSize() << ") : " << endl;
+	cout << "Now we will pop out both of the values" << endl;
+	cout << TestIntList.Pop() << endl;
+	cout << TestIntList.Pop() << endl << endl;
+	//this is testing the linked list part
 
-	while (que.isEmpty() == false)
-	{
-		cout << "  Priority: " << que.front().GetPriority();
-		cout << "  ID: " << que.front().GetID();
-		cout << endl;
+	cout << "Testing Priority Queue now" << endl;
+	cout << "First we will try and pop an empty list" << endl;
+	TestPrio.Pop();
 
-		que.pop();
+	cout << "Now we will push in a 10 with priority 10" << endl;
+	TestPrio.Push(10, 10);
+
+	cout << "The front of the list is now ";
+	cout << TestPrio.Front() << endl;
+
+	cout << "Now we will push in a 20 with a priority of 5" << endl;
+	TestPrio.Push(20, 5);
+
+	cout << "The front of the list is now ";
+	cout << TestPrio.Front() << endl;
+
+	cout << "Now we will push in a 15 with a priority of 7" << endl;
+	TestPrio.Push(15, 7);
+
+	cout << "The front of the list is now ";
+	cout << TestPrio.Front() << endl;
+
+	cout << "Now we will push in a 40 with priority of 5" << endl;
+	TestPrio.Push(40, 5);
+
+	cout << "The front of the list is now ";
+	cout << TestPrio.Front() << endl;
+
+	cout << "Lastly we will pop out all values of the list" << endl;
+	while (TestPrio.GetSize() > 0) {
+		cout << TestPrio.Pop() << endl;
 	}
 
-	cout << endl;
 
-	if (que.isEmpty() == true)
-	{
-		cout << "The container is empty." << endl;
-	}
-	else
-	{
-		cout << "The container is NOT empty." << endl;
-	}
+
+	system("PAUSE");
 
 	return 0;
 }

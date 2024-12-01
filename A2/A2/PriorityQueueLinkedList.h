@@ -1,5 +1,5 @@
 #pragma once 
-#include <cassert>
+#include <iostream>
 
 using namespace std;
 
@@ -7,8 +7,15 @@ using namespace std;
 template<class T>
 class LinkNode
 {
+
+private:
+	T m_data;
+	LinkNode* m_next;
+	LinkNode* m_prev;
+	int m_prior;
+
 public: 
-	Node(T data, int priority, Node* next)
+	LinkNode(T data, int priority, LinkNode* next)
 	{
 		m_data = data;
 		m_prev = nullptr;
@@ -16,7 +23,7 @@ public:
 		m_prior = priority;
 	}
 
-	Node(T data, int priority, Node* next, Node* prev)
+	LinkNode(T data, int priority, LinkNode* next, LinkNode* prev)
 	{
 		m_data = data;
 		m_prev = next;
@@ -24,23 +31,23 @@ public:
 		m_prior = priority;
 	}
 	
-	Node(T data)
+	LinkNode(T data, int priority)
 	{
-		m_data = data;
 		m_prev = nullptr;
-		m_next = nullptr
-		m_priority = 0;
+		m_next = nullptr;
+		m_data = data;
+		m_prior = priority;
 	}
 
-	Node(T data, Node* next)
+	LinkNode(T data, LinkNode* next)
 	{
-		m_data = inputData;
+		m_data = data;
 		m_prev = nullptr;
 		m_next = next;
 		m_prior = 0;
 	}
 
-	Node(T data, Node* prev, Node* next)
+	LinkNode(T data, LinkNode* prev, LinkNode* next)
 	{
 		m_data = data;
 		m_prev = prev;
@@ -48,18 +55,25 @@ public:
 		m_prior = 0;
 	}
 
-	~Node()
+	LinkNode(T data)
+	{
+		m_data = data;
+		m_prev = nullptr;
+		m_next = nullptr;
+		m_prior = 0;
+	}
+	~LinkNode()
 	{
 		m_next = nullptr;
 		m_prev = nullptr;
 	}
 
-	Node* GetNext()
+	LinkNode* GetNext()
 	{
 		return m_next;
 	}
 
-	Node* GetPrev()
+	LinkNode* GetPrev()
 	{
 		return m_prev;
 	}
@@ -74,12 +88,12 @@ public:
 		return m_prior;
 	}
 
-	void SetNext(Node* add)
+	void SetNext(LinkNode* add)
 	{
 		m_next = add;
 	}
 
-	void SetPrev(Node* add)
+	void SetPrev(LinkNode* add)
 	{
 		m_prev = add;
 	}
@@ -93,25 +107,18 @@ public:
 	{
 		m_prior = add;
 	}
-
-private:
-	T m_data;
-	LinkNode* m_next;
-	LinkNode* m_prev;
-	int m_prior;
-
 };
 
 
 
-template<typename T>
+template<class T>
 class LinkIterator
 {
 public:
 	LinkIterator()
 	{
 		m_node = NULL;
-		location = 0;
+		m_location = 0;
 	}
 
 	~LinkIterator()
@@ -119,7 +126,7 @@ public:
 
 	}
 
-	void GetNode()
+	T* GetNode()
 	{
 		return m_node;
 	}
@@ -134,7 +141,7 @@ public:
 		return m_location;
 	}
 
-	int SetLocation(int location)
+	void SetLocation(int location)
 	{
 		m_location = location;
 	}
@@ -144,103 +151,147 @@ public:
 		m_node = node;
 		m_location++;
 	}
-
-	void Return(T* node)
-	{
-		m_node = node;
-		m_location--;
-	}
 		
 private:
 	T* m_node;
 	int m_location;
 };
 
-template<typename T>
-class SinglyLinkList
+template<class T>
+class LinkedList
 {
-protected:
 public:
-	LinkList() : m_size(0), m_root(0), m_lastNode(0)
+	LinkedList()
 	{
-
+		m_size = 0;
+		m_first = nullptr;
+		m_last = nullptr;
 	}
 	
-	~LinkList()
-	{
-		while (m_root = NULL)
-		{
-			Pop();
+	~LinkedList() {
+
+		cout << "oof" << endl;
+		system("PAUSE");
+
+		LinkNode<T>* NextNode;
+		while (m_first != nullptr) {
+			NextNode = m_first->GetNext();
+			delete m_first;
+			m_first = NextNode;
 		}
-	}
 
-	LinkNode<T>* Begin()
+		cout << "this worked fine" << endl;
+		system("PAUSE");
+	};
+
+
+	void Push(T data) 
 	{
-		assert(m_root != NULL);
-		return m_root;
-	}
-
-	LinkNode<T>* End()
-	{
-		return NULL;
-	}
-
-	void Push(T newData)
-	{
-		LinkNode<T> *node = new LinkNode<T>;
-
-		assert(node != NULL);
-		node->m_data = newData;
-		node->m_next = NULL;
-
-		if (m_lastNode != NULL)
+		LinkNode<T>* newNode;
+		if (m_size == 0) 
 		{
-			m_lastNode->m_next = node;
-			m_lastNode = node;
+			newNode = new LinkNode<T>(data);
+			m_first = newNode;
+			m_last = newNode;
+			m_size++;
 		}
-		else
+		else 
 		{
-			m_root = node;
-			m_lastNode = node
+			newNode = new LinkNode<T>(data, m_first);
+			m_first->SetPrev(newNode);
+			m_first = newNode;
+			m_size++;
 		}
-		 
-		m_size++;
-	}
+	};
 
-	void Pop()
-	{
-		assert(m_root != NULL);
+	T Pop() { //this removes the first item of the list, it will also output the value
+		if (m_size > 0) {
+			T tempData = m_first->GetData();
 
-		if (m_root->m_next == NULL)
-		{
-			delete m_root;
-			m_root = NULL;
-		}
-		else
-		{
-			LinkNode<T>* prev Node = m_root;
-
-			while (prevNode->m_next != NULL &&
-				prevNode->m_next != m_lastNode)
-			{
-				prevNode = prevNode->m_next;
+			if (m_first->GetNext() != nullptr) {
+				LinkNode<T>* TempFirst = m_first->GetNext();
+				delete m_first;
+				m_first = TempFirst;
+				TempFirst = nullptr;
+			}
+			else {
+				delete m_first;
+				m_first = nullptr;
+				m_last = nullptr;
 			}
 
-			delete m_lastNode;
-			prevNode->m_next = NULL;
-			m_lastNode = prevNode;
+			m_size--;
+			return tempData;
 		}
+		else {
+			cout << "error, list is empty, nothing to pop." << endl;
+		}
+	};
 
-		m_size = (m_size == 0 ? m_size : m_size - 1);
-	}
+	T Front() {
+		if (m_size > 0) {
+			return m_first->GetData();
+		}
+	};
 
 	int GetSize()
 	{
 		return m_size;
 	}
 
-private:
+protected:
 	int m_size;
-	LinkNode<T>* m_root;
-	LinkNode<T>* m_lastNode;
+	LinkNode<T>* m_first;
+	LinkNode<T>* m_last;
+	LinkIterator<LinkNode<T>> it;
+};
+
+template <class T>
+class PriorityQueue : public LinkedList<T>
+{
+public:
+	// Overloaded Push without priority - Display error message
+	void Push(T data) {
+		cout << "Error: Priority not specified for insertion." << endl;
+	}
+
+	// Overloaded Push with priority
+	void Push(T data, int priority) {
+		auto* newNode = new LinkNode<T>(data, priority);
+
+		if (this->m_size == 0) {
+			// If the list is empty, initialize it with the new node
+			this->m_first = newNode;
+			this->m_last = newNode;
+		}
+		else {
+			this->it.SetNode(this->m_first);
+			while (this->it.GetNode() != nullptr) {
+				if (this->it.GetNode()->GetPrior() >= priority) {
+					// Insert new node before the current node
+					newNode->SetNext(this->it.GetNode());
+					newNode->SetPrev(this->it.GetNode()->GetPrev());
+
+					if (this->it.GetNode()->GetPrev() != nullptr) {
+						this->it.GetNode()->GetPrev()->SetNext(newNode);
+					}
+					else {
+						// New node is the new first node
+						this->m_first = newNode;
+					}
+
+					this->it.GetNode()->SetPrev(newNode);
+					this->m_size++;
+					return;
+				}
+				this->it.Iterate(this->it.GetNode()->GetNext());
+			}
+
+			// Add new node at the end if no higher-priority node is found
+			this->m_last->SetNext(newNode);
+			newNode->SetPrev(this->m_last);
+			this->m_last = newNode;
+		}
+		this->m_size++;
+	}
 };
