@@ -3,21 +3,10 @@
 
 using namespace std;
 
-template <typename T> class LinkIterator;
-template <typename T> class SinglyLinkList;
 
 template<class T>
 class LinkNode
 {
-	friend class LinkIterator<T>;
-	friend class SinglyLinkList<T>;
-
-private:
-	T m_data;
-	LinkNode* m_next;
-	LinkNode* m_prev;
-	int m_prior;
-
 public: 
 	Node(T data, int priority, Node* next)
 	{
@@ -104,6 +93,13 @@ public:
 	{
 		m_prior = add;
 	}
+
+private:
+	T m_data;
+	LinkNode* m_next;
+	LinkNode* m_prev;
+	int m_prior;
+
 };
 
 
@@ -115,50 +111,49 @@ public:
 	LinkIterator()
 	{
 		m_node = NULL;
-		nodePosition = 0;
+		location = 0;
 	}
 
-	~LinkIterator
+	~LinkIterator()
 	{
 
 	}
 
-	void operator=(LinkNode<T>* node)
+	void GetNode()
+	{
+		return m_node;
+	}
+
+	void SetNode(T* node)
 	{
 		m_node = node;
 	}
-		
-	T& operator*()
+
+	int GetLocation()
 	{
-		assert(m_node != NULL);
-		return m_node->m_data;
-	}
-		 
-	void operator++()
-	{
-		assert(m_node != NULL);
+		return m_location;
 	}
 
-	void operator++(int)
+	int SetLocation(int location)
 	{
-		assert(m_node != NULL);
-		return m_node = m_node->m_next;
+		m_location = location;
 	}
 
-	void operator!=(LinkNode<T>* node)
+	void Iterate(T* node)
 	{
-		return (m_node != node);
+		m_node = node;
+		m_location++;
 	}
 
-	void operator==(LinkNode<T>* node)
+	void Return(T* node)
 	{
-		return (m_node == node);
+		m_node = node;
+		m_location--;
 	}
-
 		
 private:
-	LinkNode<T>* m_node;
-	int nodePosition;
+	T* m_node;
+	int m_location;
 };
 
 template<typename T>
