@@ -13,6 +13,8 @@ class LinkNode
 private:
 	T m_data;
 	LinkNode* m_next;
+	LinkNode* m_prev;
+	int priority
 };
 
 template<typename T>
@@ -29,7 +31,7 @@ public:
 
 	}
 
-	void operator=(LinkNode<T> *node)
+	void operator=(LinkNode<T>* node)
 	{
 		m_node = node;
 	}
@@ -51,7 +53,7 @@ public:
 		return m_node = m_node->m_next;
 	}
 
-	void operator!=(LinkNode<T> *node)
+	void operator!=(LinkNode<T>* node)
 	{
 		return (m_node != node);
 	}
@@ -63,7 +65,7 @@ public:
 
 		
 private:
-	LinkNode<T> *m_node;
+	LinkNode<T>* m_node;
 };
 
 template<typename T>
@@ -150,6 +152,6 @@ public:
 
 private:
 	int m_size;
-	LinkNode<T> *m_root;
-	LinkNode<T> *m_lastNode;
+	LinkNode<T>* m_root;
+	LinkNode<T>* m_lastNode;
 };
