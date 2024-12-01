@@ -1,10 +1,12 @@
 #pragma once 
 #include <cassert>
 
+using namespace std;
+
 template <typename T> class LinkIterator;
 template <typename T> class SinglyLinkList;
 
-template<typename T>
+template<class T>
 class LinkNode
 {
 	friend class LinkIterator<T>;
@@ -14,8 +16,97 @@ private:
 	T m_data;
 	LinkNode* m_next;
 	LinkNode* m_prev;
-	int priority
+	int m_prior;
+
+public: 
+	Node(T data, int priority, Node* next)
+	{
+		m_data = data;
+		m_prev = nullptr;
+		m_next = next;
+		m_prior = priority;
+	}
+
+	Node(T data, int priority, Node* next, Node* prev)
+	{
+		m_data = data;
+		m_prev = next;
+		m_next = nullptr;
+		m_prior = priority;
+	}
+	
+	Node(T data)
+	{
+		m_data = data;
+		m_prev = nullptr;
+		m_next = nullptr
+		m_priority = 0;
+	}
+
+	Node(T data, Node* next)
+	{
+		m_data = inputData;
+		m_prev = nullptr;
+		m_next = next;
+		m_prior = 0;
+	}
+
+	Node(T data, Node* prev, Node* next)
+	{
+		m_data = data;
+		m_prev = prev;
+		m_next = next;
+		m_prior = 0;
+	}
+
+	~Node()
+	{
+		m_next = nullptr;
+		m_prev = nullptr;
+	}
+
+	Node* GetNext()
+	{
+		return m_next;
+	}
+
+	Node* GetPrev()
+	{
+		return m_prev;
+	}
+
+	T GetData()
+	{
+		return m_data;
+	}
+
+	int GetPrior()
+	{
+		return m_prior;
+	}
+
+	void SetNext(Node* add)
+	{
+		m_next = add;
+	}
+
+	void SetPrev(Node* add)
+	{
+		m_prev = add;
+	}
+
+	void SetData(T add)
+	{
+		m_data = add;
+	}
+
+	void SetPrior(int add)
+	{
+		m_prior = add;
+	}
 };
+
+
 
 template<typename T>
 class LinkIterator
@@ -24,6 +115,7 @@ public:
 	LinkIterator()
 	{
 		m_node = NULL;
+		nodePosition = 0;
 	}
 
 	~LinkIterator
@@ -66,11 +158,13 @@ public:
 		
 private:
 	LinkNode<T>* m_node;
+	int nodePosition;
 };
 
 template<typename T>
 class SinglyLinkList
 {
+protected:
 public:
 	LinkList() : m_size(0), m_root(0), m_lastNode(0)
 	{
