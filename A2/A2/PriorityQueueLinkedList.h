@@ -168,9 +168,9 @@ public:
 		m_last = nullptr;
 	}
 	
-	~LinkedList() {
-
-		cout << "oof" << endl;
+	~LinkedList() 
+	{
+		cout << "and...nothing" << endl;
 		system("PAUSE");
 
 		LinkNode<T>* NextNode;
@@ -180,8 +180,6 @@ public:
 			m_first = NextNode;
 		}
 
-		cout << "this worked fine" << endl;
-		system("PAUSE");
 	};
 
 
@@ -224,7 +222,7 @@ public:
 			return tempData;
 		}
 		else {
-			cout << "error, list is empty, nothing to pop." << endl;
+			cout << "Error: Empty Linked List!" << endl;
 		}
 	};
 
@@ -251,31 +249,38 @@ class PriorityQueue : public LinkedList<T>
 {
 public:
 	// Overloaded Push without priority - Display error message
-	void Push(T data) {
+	void Push(T data) 
+	{
 		cout << "Error: Priority not specified for insertion." << endl;
 	}
 
 	// Overloaded Push with priority
-	void Push(T data, int priority) {
+	void Push(T data, int priority) 
+	{
 		auto* newNode = new LinkNode<T>(data, priority);
 
-		if (this->m_size == 0) {
+		if (this->m_size == 0) 
+		{
 			// If the list is empty, initialize it with the new node
 			this->m_first = newNode;
 			this->m_last = newNode;
 		}
 		else {
 			this->it.SetNode(this->m_first);
-			while (this->it.GetNode() != nullptr) {
-				if (this->it.GetNode()->GetPrior() >= priority) {
+			while (this->it.GetNode() != nullptr) 
+			{
+				if (this->it.GetNode()->GetPrior() >= priority) 
+				{
 					// Insert new node before the current node
 					newNode->SetNext(this->it.GetNode());
 					newNode->SetPrev(this->it.GetNode()->GetPrev());
 
-					if (this->it.GetNode()->GetPrev() != nullptr) {
+					if (this->it.GetNode()->GetPrev() != nullptr) 
+					{
 						this->it.GetNode()->GetPrev()->SetNext(newNode);
 					}
-					else {
+					else 
+					{
 						// New node is the new first node
 						this->m_first = newNode;
 					}
